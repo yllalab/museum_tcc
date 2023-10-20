@@ -1,0 +1,13 @@
+[core]
+	repositoryformatversion = 0
+	filemode = true
+	bare = false
+	logallrefupdates = true
+	ignorecase = true
+	precomposeunicode = true
+[user]
+	name = PedroSejas
+	email = geromelsejas@gmail.com
+[remote "origin"]
+	url = https://github.com/PedroSejas/museum_tcc
+	fetch = +refs/heads/*:refs/remotes/origin/*
