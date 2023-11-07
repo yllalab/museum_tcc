@@ -1,16 +1,16 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 
-//void main() => runApp(MyApp());
 
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: MyScreen(),
-    );
-  }
-}
+//class MyApp extends StatelessWidget {
+//  @override
+//  Widget build(BuildContext context) {
+//    return MaterialApp(
+//      home: MyScreen(),
+//    );
+//  }
+//}
 
 class MyScreen extends StatelessWidget {
   @override
@@ -18,6 +18,10 @@ class MyScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('Minha Tela Flutter'),
+        backgroundColor: Colors.green.shade600, // Define a cor do AppBar
+        actions: [
+          FavoriteButton(), // Adicione o botão de favorito à barra de aplicativos
+        ],
       ),
       body: PageView(
         children: <Widget>[
@@ -25,6 +29,67 @@ class MyScreen extends StatelessWidget {
           Page2(),
         ],
       ),
+    );
+  }
+}
+
+class FavoriteButton extends StatefulWidget {
+  @override
+  _FavoriteButtonState createState() => _FavoriteButtonState();
+}
+
+class _FavoriteButtonState extends State<FavoriteButton> {
+  bool isFavorite = false; // Inicialmente, a Monalisa não é favorita
+
+  @override
+  void initState() {
+    super.initState();
+    Future.delayed(Duration.zero, () {
+      _showWelcomeDialog(); // Mostra o pop-up de boas-vindas após um pequeno atraso
+    });
+  }
+
+  void _showWelcomeDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('PARABEEEENNSSSS!!'),
+          content: Text('Voce acaboude ganhar 50% de desconto na cantina do Instituto, de o codigo abaixo e ganhe seu desconto!!.'),
+          actions: [
+            TextButton(
+              child: Text('Fechar'),
+              onPressed: () {
+                Navigator.of(context).pop(); // Fecha o diálogo
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void toggleFavorite() {
+    setState(() {
+      isFavorite = !isFavorite; // Alternar o estado de favorito
+      if (isFavorite) {
+        // Adicione a Monalisa à lista de favoritos
+        addToFavorites('Monalisa');
+      } else {
+        // Remova a Monalisa da lista de favoritos
+        removeFromFavorites('Monalisa');
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return IconButton(
+      icon: Icon(
+        isFavorite ? Icons.star : Icons.star_border,
+        color: isFavorite ? Colors.amber : null,
+      ),
+      onPressed: toggleFavorite,
     );
   }
 }
@@ -73,6 +138,16 @@ class Page1 extends StatelessWidget {
               softWrap: true,
               maxLines: 10, // Defina o número de linhas desejado
             ),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text('Arraste para mais informacoes', style: TextStyle(fontSize: 16)),
+              Icon(Icons.arrow_forward),
+            ],
           ),
         ),
       ],
@@ -129,5 +204,16 @@ class Page2 extends StatelessWidget {
     );
   }
 }
+
+List<String> favorites = []; // Lista de obras favoritas
+
+void addToFavorites(String artwork) {
+  favorites.add(artwork);
+}
+
+void removeFromFavorites(String artwork) {
+  favorites.remove(artwork);
+}
+
 
 

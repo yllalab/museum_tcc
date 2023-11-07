@@ -1,13 +1,23 @@
 import 'package:flutter/material.dart';
+import 'TelaBeacon2.dart';
+import 'TelaFavoritos.dart';
+import 'TelaHistorico.dart';
+import 'TelaBeacon.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
-void main() {
+//g0ZHUr9J0n7giTVgrTtF
+
+Future<void> main() async {
   runApp(MyApp());
+  await Firebase.initializeApp();
 }
 
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+        debugShowCheckedModeBanner:false,
       home: MyHomePage(),
     );
   }
@@ -22,10 +32,77 @@ class _MyHomePageState extends State<MyHomePage> {
   bool isMenuOpen = false;
 
   @override
+  void initState() {
+    super.initState();
+    Future.delayed(Duration.zero, () {
+      _showWelcomeDialog(); // Mostra o pop-up de boas-vindas após um pequeno atraso
+    });
+  }
+
+  void _showWelcomeDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Bem-vindo ao Meu App'),
+          content: Text('Esta é a mensagem de boas-vindas.'),
+          actions: [
+            TextButton(
+              child: Text('Fechar'),
+              onPressed: () {
+                Navigator.of(context).pop(); // Fecha o diálogo
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _navigateToSecondScreen() {
+    Navigator.of(context).push(MaterialPageRoute(builder: (context) => SegundaTela()));
+  }
+  void _navigateThirdScreen(){
+    Navigator.of(context).push(MaterialPageRoute(builder: (context) => FavoritesScreen()));
+  }
+  void _navigateBeaconScreen(){
+    Navigator.of(context).push(MaterialPageRoute(builder: (context) => MyScreen()));
+  }
+  void _navigateBeaconScreen2(){
+    Navigator.of(context).push(MaterialPageRoute(builder: (context) => MyScreen2()));
+  }
+
+  void registrarAcessoPagina() async {
+    try {
+      // Inicialize o Firebase, se ainda não estiver inicializado
+      await Firebase.initializeApp();
+      // Crie uma referência para a coleção "acessos" no Firestore
+      CollectionReference acessosCollection = FirebaseFirestore.instance.collection('historico');
+
+      // Crie um documento com um campo de data/hora registrando o acesso à página
+      await acessosCollection.add({
+        'pagina': 'Pagina 3',
+        'data_acesso': FieldValue.serverTimestamp(),
+      });
+      // Mostre uma mensagem de sucesso
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('Acesso registrado com sucesso!'),
+      ));
+    } catch (e) {
+      // Lida com erros, se houver algum
+      print('Erro ao registrar acesso: $e');
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('Erro ao registrar acesso.'),
+      ));
+    }
+  }
+
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Tela com Menu Lateral'),
+        title: Text('Museuml'),
         backgroundColor: Colors.green.shade600, // Define a cor do AppBar
         leading: IconButton(
             icon: Icon(Icons.menu),
@@ -56,21 +133,28 @@ class _MyHomePageState extends State<MyHomePage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   ListTile(
-                    title: Text('Opção 12'),
+                    title: Text('Historico'),
                     onTap: () {
-                      // Adicione a lógica para a Opção 1 aqui
+                      _navigateToSecondScreen();
                     },
                   ),
                   ListTile(
-                    title: Text('Opção 2'),
+                    title: Text('Favoritos'),
                     onTap: () {
-                      // Adicione a lógica para a Opção 2 aqui
+                      _navigateThirdScreen();
                     },
                   ),
                   ListTile(
                     title: Text('Opção 3'),
                     onTap: () {
-                      // Adicione a lógica para a Opção 3 aqui
+                      _navigateBeaconScreen();
+                      registrarAcessoPagina();
+                    },
+                  ),
+                  ListTile(
+                    title: Text('Opção 4'),
+                    onTap: () {
+                      _navigateBeaconScreen2();
                     },
                   ),
                 ],
